@@ -1,0 +1,10 @@
+:root{
+  --bg1: #0b0a1e;
+  --bg2: #140037;
+  --accent: #a065ff;
+  --accent-2: #6b21a8;
+}
+
+*{box-sizing:border-box}
+body,html,#root{height:100%;margin:0;background:var(--bg1);color:#fff;font-family:Poppins,Arial,Helvetica,sans-serif}
+a{color:inherit}

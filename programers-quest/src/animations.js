@@ -1,15 +1,28 @@
-// animations.js
-document.addEventListener("DOMContentLoaded", () => {
-  const missionCard = document.querySelector(".card.missao");
-  if (!missionCard) return;
+// animations.js - applies site-wide animated glows & intro fades
+document.addEventListener('DOMContentLoaded', ()=> {
+  // header fade-in
+  const header = document.querySelector('.header');
+  if(header) header.style.opacity = 0;
+  setTimeout(()=> { if(header) header.style.transition = 'opacity 0.6s ease'; if(header) header.style.opacity = 1; }, 200);
 
-  let glow = 0;
-  let direction = 1;
+  // subtle floating for feature cards
+  const cards = document.querySelectorAll('.feature-card');
+  cards.forEach((c,i)=>{
+    c.style.transform = 'translateY(0)';
+    const dur = 3000 + i*400;
+    let dir = 1;
+    setInterval(()=>{
+      c.style.transform = `translateY(${dir * 6}px)`;
+      dir *= -1;
+    }, dur);
+  });
 
-  setInterval(() => {
-    glow += direction * 0.02;
-    if (glow > 1 || glow < 0) direction *= -1;
-
-    missionCard.style.boxShadow = `0 0 ${20 + glow * 10}px rgba(180, 100, 255, ${0.3 + glow * 0.4})`;
-  }, 80);
+  // animated gradient on buttons
+  const grads = document.querySelectorAll('.button-gradient, .button-primary');
+  grads.forEach(btn=>{
+    btn.style.backgroundSize = '200% 100%';
+    btn.style.transition = 'transform .18s ease';
+    btn.addEventListener('mouseenter', ()=> btn.style.transform = 'translateY(-3px)');
+    btn.addEventListener('mouseleave', ()=> btn.style.transform = 'translateY(0)');
+  });
 });

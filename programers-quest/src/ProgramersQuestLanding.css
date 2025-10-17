@@ -41,6 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.3rem;
 }
 
 .nav-links {
@@ -55,10 +56,6 @@
   color: #cbd5e1;
 }
 
-.nav-links a:hover {
-  text-decoration: underline;
-}
-
 .button-gradient {
   background: linear-gradient(to right, #7c3aed, #06b6d4);
   color: black;
@@ -67,6 +64,7 @@
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
+  box-shadow: 0 6px 18px rgba(124,58,237,0.18);
 }
 
 /* --- Main --- */
@@ -92,10 +90,43 @@
 /* --- Cards gerais --- */
 .card {
   border-radius: 1rem;
-  background: linear-gradient(to bottom right, #061226, #041025);
-  border: 1px solid #334155;
+  background: linear-gradient(to bottom right, rgba(4,6,20,0.6), rgba(8,8,16,0.6));
+  border: 1px solid rgba(100,100,120,0.08);
   padding: 1rem;
   margin-bottom: 1rem;
+  cursor: default;
+}
+
+/* Feature grid */
+.feature-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* feature card */
+.feature-card{
+  cursor: pointer;
+  transform: translateY(0);
+  transition: transform .28s ease, box-shadow .28s ease;
+  border: 1px solid rgba(160,120,255,0.12);
+  background: linear-gradient(180deg, rgba(30,0,60,0.45), rgba(10,0,35,0.35));
+  box-shadow: 0 6px 16px rgba(10,6,20,0.6);
+  padding: 1.2rem;
+}
+feature-card:hover{
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(110,45,200,0.18);
+}
+.feature-card h4{margin:0 0 8px 0}
+.feature-card .cta{
+  margin-top:12px;
+  font-weight:600;
+  color:var(--accent);
+  padding:6px 10px;
+  display:inline-block;
+  border-radius:6px;
+  border:1px solid rgba(160,120,255,0.18);
 }
 
 /* --- Tela de Missão --- */
@@ -103,8 +134,8 @@
   position: relative;
   background: linear-gradient(135deg, rgba(60, 0, 120, 0.6), rgba(20, 0, 60, 0.8));
   border: 1px solid rgba(180, 100, 255, 0.4);
-  box-shadow: 0 0 20px rgba(140, 0, 255, 0.2);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(140, 0, 255, 0.12);
+  backdrop-filter: blur(6px);
   transition: all 0.3s ease;
   animation: pulseGlow 4s infinite alternate;
 }
@@ -116,8 +147,8 @@
 
 /* Brilho animado */
 @keyframes pulseGlow {
-  0% { box-shadow: 0 0 10px rgba(160, 90, 255, 0.2); }
-  100% { box-shadow: 0 0 25px rgba(200, 120, 255, 0.6); }
+  0% { box-shadow: 0 0 10px rgba(160, 90, 255, 0.12); }
+  100% { box-shadow: 0 0 25px rgba(200, 120, 255, 0.28); }
 }
 
 /* --- Mock Cards --- */
@@ -137,44 +168,44 @@
   box-shadow: 0 0 10px rgba(160, 80, 255, 0.6);
 }
 
-/* --- Botões --- */
-.button-primary {
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  background: #fff;
-  color: black;
-  border: none;
-  cursor: pointer;
+/* --- Game screens --- */
+.game-screen{
+  max-width:920px;
+  margin:3rem auto;
+  padding: 0 1.5rem;
+}
+game-card{
+  background: linear-gradient(180deg, rgba(6,8,20,0.6), rgba(10,8,28,0.6));
+  border-radius:12px;
+  padding:18px;
+  border:1px solid rgba(120,90,200,0.08);
+  box-shadow: 0 10px 30px rgba(10,6,20,0.6);
 }
 
-.button-secondary {
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  background: transparent;
-  color: #cbd5e1;
-  border: 1px solid #334155;
-  cursor: pointer;
+/* quiz */
+.q-text{font-size:1.1rem}
+.options{display:flex;gap:8px;margin-top:8px}
+.opt-btn{
+  padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#e6e6e6;cursor:pointer;
+}
+.opt-btn.selected{outline:2px solid rgba(160,120,255,0.28);transform:translateY(-2px);box-shadow:0 8px 20px rgba(120,70,200,0.08)}
+
+/* drag list */
+.drag-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.drag-item{padding:12px;border-radius:8px;background:linear-gradient(90deg, rgba(30,0,60,0.6), rgba(10,0,35,0.4));border:1px solid rgba(160,120,255,0.12);cursor:grab}
+.drag-item:active{cursor:grabbing;opacity:0.9}
+
+/* progress */
+.progress-wrap{width:100%;height:18px;background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;margin-top:12px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#8a4bff,#45d1ff);transition:width .6s cubic-bezier(.2,.9,.3,1)}
+
+/* buttons */
+.button-primary{
+  padding:0.75rem 1.25rem;border-radius:0.5rem;font-weight:600;background:#fff;color:black;border:none;cursor:pointer;
+}
+.button-secondary{
+  padding:0.75rem 1.25rem;border-radius:0.5rem;font-weight:500;background:transparent;color:#cbd5e1;border:1px solid rgba(120,120,140,0.08);cursor:pointer;
 }
 
-/* --- Footer --- */
-.footer {
-  width: 100%;
-  border-top: 1px solid #1e293b;
-  padding: 1.5rem 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.85rem;
-  color: #94a3b8;
-}
-
-.footer a {
-  color: #cbd5e1;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-}
+/* messages */
+.message{margin-top:12px;padding:8px;border-radius:8px;background:rgba(0,0,0,0.2);border:1px solid rgba(150,150,150,0.04)}
