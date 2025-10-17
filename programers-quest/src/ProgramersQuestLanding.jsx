@@ -1,13 +1,24 @@
-import React from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
 import "./ProgramersQuestLanding.css";
 import "./animations.js";
+import { initAnimations } from "./animations";
+
+import { useNavigate } from "react-router-dom";
 
 export default function ProgramersQuestLanding() {
   const navigate = useNavigate();
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    initAnimations();
+  }, 300); // pequeno delay pra garantir render
+  return () => clearTimeout(timeout);
+}, []);
 
   return (
     <div className="programers-landing">
+      <div className="floating-icons"></div>
+      <div className="foguetes-container"></div>
+
       {/* Header */}
       <header className="header">
         <div className="logo-container">
@@ -22,7 +33,9 @@ export default function ProgramersQuestLanding() {
           <a href="#gameplay">Como Jogar</a>
           <a href="#recursos">Recursos</a>
           <a href="#contato">Contato</a>
-          <button className="button-gradient" onClick={()=> navigate('/logica')}>Jogar Agora</button>
+          <button className="button-gradient" onClick={() => navigate("/missoes")}>
+            Jogar Agora
+          </button>
         </nav>
       </header>
 
@@ -31,32 +44,44 @@ export default function ProgramersQuestLanding() {
         <section className="section">
           <h2>Embarque na galáxia do código</h2>
           <p>
-            Programers Quest é um jogo educativo que transforma conceitos de programação em missões interativas.
-            Aprenda lógica, estruturas de dados e desenvolvimento web enquanto explora planetas, resolve desafios e desbloqueia ferramentas.
+            Programers Quest é um jogo educativo que transforma conceitos de
+            programação em missões interativas. Aprenda lógica, estruturas de
+            dados e desenvolvimento web enquanto explora planetas, resolve
+            desafios e desbloqueia ferramentas.
           </p>
 
-          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
-            <button className="button-primary" onClick={()=> navigate('/logica')}>Como Jogar</button>
-            <button className="button-secondary" onClick={()=> navigate('/recursos')}>Ver Recursos</button>
+          <div className="button-group">
+            <button className="button-primary">Como Jogar</button>
+            <button className="button-secondary">Ver Recursos</button>
           </div>
 
-          <div
-            className="feature-grid"
-            style={{
-              marginTop: "1.5rem",
-            }}
-          >
-            <FeatureCard title="Lógica" desc="Aprenda passo a passo" to="/logica" />
-            <FeatureCard title="Missões" desc="Problemas do mundo real" to="/missoes" />
-            <FeatureCard title="Progressão" desc="Níveis que ensinam" to="/progresso" />
+          <div className="feature-grid">
+            <FeatureCard
+              title="Lógica"
+              desc="Aprenda passo a passo com desafios de código"
+              icon="🧩"
+              onClick={() => navigate("/logica")}
+            />
+            <FeatureCard
+              title="Missões"
+              desc="Resolva problemas reais em formato de jogo"
+              icon="⚡"
+              onClick={() => navigate("/missoes")}
+            />
+            <FeatureCard
+              title="Progressão"
+              desc="Suba de nível e acompanhe seu avanço"
+              icon="🪐"
+              onClick={() => navigate("/progresso")}
+            />
           </div>
         </section>
 
         <section className="section">
           <div className="card missao">
             <h3>Tela de Missão</h3>
-            <p>Resolva o quebra-cabeça para restaurar a nave</p>
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+            <p>Resolva o puzzle para consertar a nave</p>
+            <div className="mock-container">
               <MockCard label="Entrada" />
               <MockCard label="Saída" />
               <MockCard label="Dicas" />
@@ -67,7 +92,9 @@ export default function ProgramersQuestLanding() {
 
       {/* Footer */}
       <footer className="footer">
-        <div>© {new Date().getFullYear()} Programers Quest — Todos os direitos reservados</div>
+        <div>
+          © {new Date().getFullYear()} Programers Quest — Todos os direitos reservados
+        </div>
         <div>
           <a href="#">Termos</a> | <a href="#">Privacidade</a>
         </div>
@@ -77,13 +104,12 @@ export default function ProgramersQuestLanding() {
 }
 
 /* --- Components --- */
-function FeatureCard({ title, desc, to }) {
-  const navigate = useNavigate();
+function FeatureCard({ title, desc, icon, onClick }) {
   return (
-    <div className="card feature-card" role="button" onClick={() => navigate(to)}>
+    <div className="card feature-card" onClick={onClick}>
+      <div className="feature-icon">{icon}</div>
       <h4>{title}</h4>
       <p>{desc}</p>
-      <div className="cta">Entrar</div>
     </div>
   );
 }
@@ -91,8 +117,8 @@ function FeatureCard({ title, desc, to }) {
 function MockCard({ label }) {
   return (
     <div className="mock-card">
-      <div className="mock-label">{label}</div>
-      <div className="mock-placeholder">Espaço reservado</div>
+      <div>{label}</div>
+      <div>Placeholder</div>
     </div>
   );
 }
