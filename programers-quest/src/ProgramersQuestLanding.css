@@ -1,12 +1,20 @@
-/* --- Background principal --- */
+/* --- Fundo com energia fluindo --- */
 .programers-landing {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #0f172a, #0b1220, #081025);
+  background: linear-gradient(270deg, #0b0a1e, #140037, #0a0025);
+  background-size: 600% 600%;
+  animation: gradientFlow 15s ease infinite;
   color: white;
+  font-family: "Poppins", sans-serif;
   position: relative;
   overflow: hidden;
-  font-family: Arial, sans-serif;
   padding: 0 1.5rem;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* --- Header --- */
@@ -61,7 +69,7 @@
   cursor: pointer;
 }
 
-/* --- Main Sections --- */
+/* --- Main --- */
 .main-section {
   max-width: 1200px;
   margin: 3rem auto;
@@ -81,7 +89,7 @@
   max-width: 36rem;
 }
 
-/* --- Cards --- */
+/* --- Cards gerais --- */
 .card {
   border-radius: 1rem;
   background: linear-gradient(to bottom right, #061226, #041025);
@@ -90,24 +98,46 @@
   margin-bottom: 1rem;
 }
 
+/* --- Tela de Missão --- */
+.card.missao {
+  position: relative;
+  background: linear-gradient(135deg, rgba(60, 0, 120, 0.6), rgba(20, 0, 60, 0.8));
+  border: 1px solid rgba(180, 100, 255, 0.4);
+  box-shadow: 0 0 20px rgba(140, 0, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  animation: pulseGlow 4s infinite alternate;
+}
+
+.card.missao:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px rgba(200, 100, 255, 0.6);
+}
+
+/* Brilho animado */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 10px rgba(160, 90, 255, 0.2); }
+  100% { box-shadow: 0 0 25px rgba(200, 120, 255, 0.6); }
+}
+
+/* --- Mock Cards --- */
 .mock-card {
   border-radius: 0.5rem;
-  background: #021029;
-  border: 1px solid #1e293b;
+  background: rgba(30, 0, 60, 0.6);
+  border: 1px solid rgba(180, 100, 255, 0.3);
   text-align: center;
   padding: 0.5rem;
   font-size: 0.8rem;
+  transition: 0.3s;
 }
 
-.info-card, .mini-card {
-  border-radius: 1rem;
-  background: linear-gradient(to bottom right, #07102a, #041029);
-  border: 1px solid #1e293b;
-  padding: 1rem;
-  margin-bottom: 1rem;
+.mock-card:hover {
+  background: rgba(80, 0, 150, 0.6);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(160, 80, 255, 0.6);
 }
 
-/* --- Buttons --- */
+/* --- Botões --- */
 .button-primary {
   padding: 0.75rem 1.25rem;
   border-radius: 0.5rem;

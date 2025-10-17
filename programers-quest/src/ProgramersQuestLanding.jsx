@@ -1,5 +1,6 @@
 import React from "react";
 import "./ProgramersQuestLanding.css";
+import "./animations.js";
 
 export default function ProgramersQuestLanding() {
   return (
@@ -26,14 +27,25 @@ export default function ProgramersQuestLanding() {
       <main className="main-section">
         <section className="section">
           <h2>Embarque na galáxia do código</h2>
-          <p>Programers Quest é um jogo educativo que transforma conceitos de programação em missões interativas. Aprenda lógica, estruturas de dados e desenvolvimento web enquanto explora planetas, resolve desafios e desbloqueia ferramentas.</p>
+          <p>
+            Programers Quest é um jogo educativo que transforma conceitos de programação em missões interativas. 
+            Aprenda lógica, estruturas de dados e desenvolvimento web enquanto explora planetas, 
+            resolve desafios e desbloqueia ferramentas.
+          </p>
 
           <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
             <button className="button-primary">Como Jogar</button>
             <button className="button-secondary">Ver Recursos</button>
           </div>
 
-          <div style={{ marginTop: "1.5rem", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem" }}>
+          <div
+            style={{
+              marginTop: "1.5rem",
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "0.5rem",
+            }}
+          >
             <FeatureCard title="Lógica" desc="Aprenda passo a passo" />
             <FeatureCard title="Missões" desc="Problemas do mundo real" />
             <FeatureCard title="Progressão" desc="Níveis que ensinam" />
@@ -41,13 +53,13 @@ export default function ProgramersQuestLanding() {
         </section>
 
         <section className="section">
-          <div className="card">
+          <div className="card missao">
             <h3>Tela de Missão</h3>
-            <p>Resolva o puzzle para consertar a nave</p>
+            <p>Resolva o quebra-cabeça para restaurar a nave</p>
             <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-              <MockCard label="Entrada"/>
-              <MockCard label="Saída"/>
-              <MockCard label="Dicas"/>
+              <MockCard label="Entrada" />
+              <MockCard label="Saída" />
+              <MockCard label="Dicas" />
             </div>
           </div>
         </section>
@@ -78,7 +90,7 @@ function MockCard({ label }) {
   return (
     <div className="mock-card">
       <div>{label}</div>
-      <div>Placeholder</div>
+      <div>Espaço reservado</div>
     </div>
   );
 }
