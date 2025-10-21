@@ -1,0 +1,100 @@
+.coach {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.coach.is-collapsed .coach-bubble { display: none; }
+
+.coach-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(167,139,250,0.10), rgba(255,255,255,0.03));
+  border: 1px solid var(--border, #2a2353);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  display: grid;
+  place-items: center;
+  cursor: grab;
+}
+.coach-avatar:active { cursor: grabbing; }
+
+.coach-bubble {
+  max-width: min(440px, 80vw);
+  background: #100c2b;
+  color: var(--text, #ece8ff);
+  border: 1px solid var(--border, #2a2353);
+  border-radius: 14px;
+  padding: 12px 12px 8px 12px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+  position: relative;
+}
+.coach-bubble::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  bottom: 14px;
+  border-width: 10px 0 10px 12px;
+  border-style: solid;
+  border-color: transparent transparent transparent #100c2b;
+  filter: drop-shadow(-1px 0 0 var(--border, #2a2353));
+}
+
+.coach-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.coach-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.coach-btn {
+  appearance: none;
+  background: #161337;
+  color: #eae6ff;
+  border: 1px solid var(--border, #2a2353);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 120ms ease;
+}
+.coach-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,58,237,0.25); }
+.coach-btn.on { background: #8b5cf6; color: #1b0f3d; border-color: #7c3aed; }
+
+.coach-text {
+  font-size: 1rem;
+  line-height: 1.45rem;
+  color: #e9e6ff;
+}
+
+.coach-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.coach-index { color: #bfb6ff; font-size: 12px; }
+
+/* Quiz relâmpago do Mago */
+.kids-quiz { display: grid; gap: 8px; }
+.kids-quiz .quiz-q { font-weight: 600; }
+.kids-quiz .quiz-a { display: flex; gap: 8px; flex-wrap: wrap; }
+.coach-btn.bubble { background: #211b4a; }
+.coach-btn.bubble.correct { outline: 2px solid #22c55e; background: #112517; }
+.coach-btn.bubble.incorrect { outline: 2px solid #ef4444; background: #2b1414; }
+.quiz-tip { color: #bfb6ff; font-size: 0.95rem; }
+
+/* Confete (usado pelo util) */
+.confetti {
+  position: fixed;
+  font-size: 18px;
+  animation: confetti-fall 900ms ease-out forwards;
+  transform: translate(0, 0) rotate(0deg);
+  pointer-events: none;
+}
+@keyframes confetti-fall {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); }
+}

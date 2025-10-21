@@ -1,36 +1,23 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProgramersQuestLanding from './ProgramersQuestLanding';
 import TelaLogica from './TelaLogica';
 import TelaMissoes from './TelaMissoes';
 import TelaProgresso from './TelaProgresso';
-import './ProgramersQuestLanding.css';
+import Leaderboard from './pages/Leaderboard';
+import Header from './components/Header';
 
 export default function App() {
   return (
-    <Router>
-      <AnimatePresence mode="wait">
-        <Routes>
-          <Route path="/" element={<PageWrapper><ProgramersQuestLanding/></PageWrapper>} />
-          <Route path="/logica" element={<PageWrapper><TelaLogica/></PageWrapper>} />
-          <Route path="/missoes" element={<PageWrapper><TelaMissoes/></PageWrapper>} />
-          <Route path="/progresso" element={<PageWrapper><TelaProgresso/></PageWrapper>} />
-        </Routes>
-      </AnimatePresence>
-    </Router>
-  );
-}
-
-function PageWrapper({ children }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.35 }}
-    >
-      {children}
-    </motion.div>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<ProgramersQuestLanding />} />
+        <Route path="/logica" element={<TelaLogica />} />
+        <Route path="/missoes" element={<TelaMissoes />} />
+        <Route path="/progresso" element={<TelaProgresso />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

@@ -2,42 +2,22 @@ import React, { useEffect } from "react";
 import "./ProgramersQuestLanding.css";
 import "./animations.js";
 import { initAnimations } from "./animations";
-
 import { useNavigate } from "react-router-dom";
 
 export default function ProgramersQuestLanding() {
   const navigate = useNavigate();
-useEffect(() => {
-  const timeout = setTimeout(() => {
-    initAnimations();
-  }, 300); // pequeno delay pra garantir render
-  return () => clearTimeout(timeout);
-}, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      initAnimations();
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <div className="programers-landing">
       <div className="floating-icons"></div>
       <div className="foguetes-container"></div>
-
-      {/* Header */}
-      <header className="header">
-        <div className="logo-container">
-          <div className="logo-icon">🚀</div>
-          <div>
-            <h1>Programers Quest</h1>
-            <p>Aprenda programação jogando — aventura educativa</p>
-          </div>
-        </div>
-        <nav className="nav-links">
-          <a href="#sobre">Sobre</a>
-          <a href="#gameplay">Como Jogar</a>
-          <a href="#recursos">Recursos</a>
-          <a href="#contato">Contato</a>
-          <button className="button-gradient" onClick={() => navigate("/missoes")}>
-            Jogar Agora
-          </button>
-        </nav>
-      </header>
 
       {/* Main */}
       <main className="main-section">
@@ -51,8 +31,12 @@ useEffect(() => {
           </p>
 
           <div className="button-group">
-            <button className="button-primary">Como Jogar</button>
-            <button className="button-secondary">Ver Recursos</button>
+            <button className="button-primary" onClick={() => navigate("/missoes")}>
+              Jogar Agora
+            </button>
+            <button className="button-secondary" onClick={() => navigate("/leaderboard")}>
+              Ver Classificação
+            </button>
           </div>
 
           <div className="feature-grid">
@@ -80,7 +64,7 @@ useEffect(() => {
         <section className="section">
           <div className="card missao">
             <h3>Tela de Missão</h3>
-            <p>Resolva o puzzle para consertar a nave</p>
+            <p>Arraste os passos para a ordem correta.</p>
             <div className="mock-container">
               <MockCard label="Entrada" />
               <MockCard label="Saída" />
@@ -95,8 +79,10 @@ useEffect(() => {
         <div>
           © {new Date().getFullYear()} Programers Quest — Todos os direitos reservados
         </div>
-        <div>
-          <a href="#">Termos</a> | <a href="#">Privacidade</a>
+        <div className="footer-links">
+          <button type="button" className="linklike">Termos</button>
+          <span className="sep">|</span>
+          <button type="button" className="linklike">Privacidade</button>
         </div>
       </footer>
     </div>
@@ -106,7 +92,8 @@ useEffect(() => {
 /* --- Components --- */
 function FeatureCard({ title, desc, icon, onClick }) {
   return (
-    <div className="card feature-card" onClick={onClick}>
+    <div className="card feature-card" onClick={onClick} role="button" tabIndex={0}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}>
       <div className="feature-icon">{icon}</div>
       <h4>{title}</h4>
       <p>{desc}</p>
