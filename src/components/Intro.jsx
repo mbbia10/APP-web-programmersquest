@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Intro({ onLearn, onStart, onOpenProfile, player }) {
+export default function Intro({ onLearn, onStart, onOpenProfile, onOpenEditor, player }) {
   return (
     <section className="card">
       <h2>Como funciona</h2>
@@ -27,6 +27,9 @@ export default function Intro({ onLearn, onStart, onOpenProfile, player }) {
       <div className="intro-actions">
         <button className="btn" onClick={onLearn}>Aprender</button>
         <button className="btn primary" onClick={onStart}>Praticar (Quiz)</button>
+        <button className="btn" onClick={onOpenEditor} title="Adicionar/editar perguntas">
+          Editar perguntas
+        </button>
       </div>
     </section>
   );

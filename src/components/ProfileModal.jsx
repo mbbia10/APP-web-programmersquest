@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { confettiBurst } from "../utils/Confetti";
+import { confettiBurst } from "../utils/confetti";
 
 const DEFAULT_CHARACTERS = [
   { id: "char1", name: "Herói 1", img: "/characters/char1.png" },

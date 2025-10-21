@@ -5,12 +5,20 @@ import Quiz from "./components/Quiz.jsx";
 import Results from "./components/Results.jsx";
 import Background from "./components/Background.jsx";
 import ProfileModal from "./components/ProfileModal.jsx";
+import QuestionEditor from "./components/QuestionEditor.jsx";
 import { QUESTIONS } from "./data/questions.js";
 import { LESSONS } from "./data/lessons.js";
+import { Sound } from "./utils/sound";
 
 const BEST_KEY = "progquiz_best";
 const PROFILE_KEY = "player_profile";
+const CUSTOM_Q_KEY = "custom_questions_v1";
 const SHUFFLE = true;
+
+const SETTINGS_KEYS = {
+  sounds: "settings_sounds",
+  motion: "settings_motion",
+};
 
 const DEFAULT_QUESTIONS = [
   {
@@ -49,7 +57,7 @@ export default function App() {
   const [filterTopic, setFilterTopic] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState(0);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0); // pode ter 0.5
   const [answered, setAnswered] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [perTopic, setPerTopic] = useState({});
@@ -58,40 +66,78 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
 
+  const [soundsOn, setSoundsOn] = useState(true);
+  const [motionOn, setMotionOn] = useState(true);
+
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [customQuestions, setCustomQuestions] = useState([]);
+
   const allLessonsTopics = useMemo(() => Object.keys(LESSONS || {}), []);
   const currentQuestion = questions.length > 0 ? questions[index] : null;
 
+  // Carrega perfil, settings e custom questions
   useEffect(() => {
     const saved = localStorage.getItem(PROFILE_KEY);
     if (saved) {
       try { setProfile(JSON.parse(saved)); } catch {}
     }
+    const s = localStorage.getItem(SETTINGS_KEYS.sounds);
+    const m = localStorage.getItem(SETTINGS_KEYS.motion);
+    if (s !== null) setSoundsOn(s === "true"); else setSoundsOn(true);
+    if (m !== null) setMotionOn(m === "true");
+    else {
+      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setMotionOn(!prefersReduced);
+    }
+    const cq = localStorage.getItem(CUSTOM_Q_KEY);
+    if (cq) {
+      try { setCustomQuestions(JSON.parse(cq) || []); } catch {}
+    }
   }, []);
 
-  function getSafeQuestions() {
-    if (Array.isArray(QUESTIONS) && QUESTIONS.length > 0) return QUESTIONS;
-    console.warn("QUESTIONS vazio ou não carregado. Usando DEFAULT_QUESTIONS.");
-    return DEFAULT_QUESTIONS;
+  // Aplicar sons
+  useEffect(() => {
+    Sound.setEnabled(soundsOn);
+    localStorage.setItem(SETTINGS_KEYS.sounds, String(soundsOn));
+  }, [soundsOn]);
+
+  useEffect(() => {
+    localStorage.setItem(SETTINGS_KEYS.motion, String(motionOn));
+  }, [motionOn]);
+
+  function mergedQuestions() {
+    const base = Array.isArray(QUESTIONS) && QUESTIONS.length ? QUESTIONS : DEFAULT_QUESTIONS;
+    const custom = Array.isArray(customQuestions) ? customQuestions : [];
+    // Evita duplicar por prompt + topic
+    const seen = new Set();
+    const out = [];
+    [...base, ...custom].forEach((q) => {
+      const key = `${(q.topic || "").trim()}@@${(q.prompt || "").trim()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(q);
+      }
+    });
+    return out;
   }
 
   function startQuiz(topic = null) {
-    // Se não tem perfil, abre modal primeiro
     if (!profile) {
       setProfileOpen(true);
       return;
     }
 
-    const base = getSafeQuestions().slice();
+    const base = mergedQuestions();
     const filtered = topic ? base.filter((q) => q.topic === topic) : base;
 
     if (!filtered.length) {
       if (topic) {
-        alert(`Não há perguntas para o tópico: ${topic}. Abra “Aprender” para revisar ou adicione questões em src/data/questions.js.`);
+        alert(`Não há perguntas para o tópico: ${topic}. Abra “Aprender” para revisar ou adicione questões em “Editar perguntas”.`);
         setFromQuiz(false);
         setLearnTopic(allLessonsTopics.includes(topic) ? topic : allLessonsTopics[0] || null);
         setView("learn");
       } else {
-        alert("Banco de perguntas vazio. Edite src/data/questions.js e adicione questões.");
+        alert("Banco de perguntas vazio. Use “Editar perguntas” para adicionar ou importe um JSON.");
         setView("intro");
       }
       return;
@@ -110,23 +156,16 @@ export default function App() {
   }
 
   function openLearn({ topic = null, fromQuiz = false } = {}) {
-    // Se não tem perfil, ainda pode aprender, mas sugerimos criar
     setFromQuiz(fromQuiz);
     const initial = topic && LESSONS[topic] ? topic : (allLessonsTopics[0] || null);
     setLearnTopic(initial);
     setView("learn");
   }
 
-  function backFromLearn() {
-    setView("intro");
-  }
+  function backFromLearn() { setView("intro"); }
+  function backToQuiz() { if (questions.length > 0) setView("quiz"); else setView("intro"); }
 
-  function backToQuiz() {
-    if (questions.length > 0) setView("quiz");
-    else setView("intro");
-  }
-
-  function selectChoice(idx) {
+  function selectChoice(idx, hintUsed = false) {
     if (answered) return;
     setAnswered(true);
     setSelectedIndex(idx);
@@ -134,7 +173,7 @@ export default function App() {
     const q = questions[index];
     const isCorrect = idx === q.answer;
     if (isCorrect) {
-      setScore((s) => s + 1);
+      setScore((s) => s + (hintUsed ? 0.5 : 1));
       setPerTopic((pt) => ({
         ...pt,
         [q.topic]: { ...pt[q.topic], correct: (pt[q.topic]?.correct || 0) + 1 }
@@ -147,6 +186,7 @@ export default function App() {
       setIndex((i) => i + 1);
       setAnswered(false);
       setSelectedIndex(null);
+      Sound.unlock();
     } else {
       finishQuiz();
     }
@@ -174,32 +214,58 @@ export default function App() {
     setFilterTopic(null);
   }
 
-  function openProfile() {
-    setProfileOpen(true);
-  }
+  function openProfile() { setProfileOpen(true); }
   function saveProfile(p) {
     setProfile(p);
     localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
     setProfileOpen(false);
   }
 
+  function openEditor() { setEditorOpen(true); }
+  function saveCustomQuestions(list) {
+    setCustomQuestions(list);
+    localStorage.setItem(CUSTOM_Q_KEY, JSON.stringify(list));
+  }
+
   return (
     <div className="app-root" style={{ position: "relative", zIndex: 1 }}>
-      <Background speed={0.55} />
+      {motionOn ? <Background speed={0.55} /> : null}
 
       <header className="app-header">
         <h1>Programmer´s Quest</h1>
         <p className="subtitle">Aprenda o básico e pratique com perguntas</p>
 
-        <div className="header-profile">
-          {profile?.name ? (
-            <button className="profile-chip" onClick={openProfile} title="Alterar personagem">
-              <img src={profile.avatar} alt={profile.name} />
-              <span>{profile.name}</span>
+        <div className="header-row">
+          <div className="header-profile">
+            {profile?.name ? (
+              <button className="profile-chip" onClick={openProfile} title="Alterar personagem">
+                <img src={profile.avatar} alt={profile.name} />
+                <span>{profile.name}</span>
+              </button>
+            ) : (
+              <button className="btn tiny" onClick={openProfile}>Escolher personagem</button>
+            )}
+          </div>
+
+          <div className="header-settings">
+            <button
+              className={`chip ${soundsOn ? "on" : ""}`}
+              onClick={() => setSoundsOn((v) => !v)}
+              title={soundsOn ? "Desativar sons" : "Ativar sons"}
+            >
+              🔊 Sons: {soundsOn ? "ON" : "OFF"}
             </button>
-          ) : (
-            <button className="btn tiny" onClick={openProfile}>Escolher personagem</button>
-          )}
+            <button
+              className={`chip ${motionOn ? "on" : ""}`}
+              onClick={() => setMotionOn((v) => !v)}
+              title={motionOn ? "Desativar animações" : "Ativar animações"}
+            >
+              ✨ Animações: {motionOn ? "ON" : "OFF"}
+            </button>
+            <button className="chip" onClick={openEditor} title="Criar/editar perguntas">
+              📝 Editor
+            </button>
+          </div>
         </div>
       </header>
 
@@ -209,6 +275,7 @@ export default function App() {
             onLearn={() => openLearn({ fromQuiz: false })}
             onStart={() => startQuiz(null)}
             onOpenProfile={openProfile}
+            onOpenEditor={openEditor}
             player={profile}
           />
         )}
@@ -253,6 +320,8 @@ export default function App() {
             total={questions.length}
             perTopic={perTopic}
             onRestart={restart}
+            onPracticeTopic={(topic) => startQuiz(topic)}
+            player={profile}
           />
         )}
       </main>
@@ -266,6 +335,14 @@ export default function App() {
         onClose={() => setProfileOpen(false)}
         onSave={saveProfile}
         initial={profile || { name: "", avatar: "", charId: "" }}
+      />
+
+      <QuestionEditor
+        open={editorOpen}
+        onClose={() => setEditorOpen(false)}
+        onSave={saveCustomQuestions}
+        initial={customQuestions}
+        knownTopics={allLessonsTopics}
       />
     </div>
   );

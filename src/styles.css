@@ -298,3 +298,66 @@ body {
 }
 .avatar-name { font-weight: 600; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.header-settings { display: inline-flex; gap: 8px; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #161337;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 120ms ease;
+  font-size: 12px;
+}
+.chip.on { outline: 2px solid var(--primary); }
+
+/* Quiz tools (Teoria / Dica) */
+.quiz-tools { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+
+/* Esconde alternativa eliminada pela dica */
+.choice.is-hidden {
+  display: none;
+}
+
+.qe-list {
+  background: #151237;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.qe-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.qe-list thead th {
+  background: #120f2c;
+  color: var(--muted);
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.qe-list tbody td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.qe-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+.qe-choices { display: grid; gap: 8px; }
+.qe-choice-row { display: grid; grid-template-columns: 22px 1fr 42px; gap: 8px; align-items: center; }
+.qe-choice-row input[type="text"] {
+  background: #161337; color: var(--text); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 10px;
+}

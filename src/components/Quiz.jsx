@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Coach from "./Coach.jsx";
-import { confettiBurst } from "../utils/Confetti.js";
+import { confettiBurst } from "../utils/confetti";
+import { Sound } from "../utils/sound";
 
 export default function Quiz({
   question,
@@ -9,30 +10,44 @@ export default function Quiz({
   filterTopic,
   answered,
   selectedIndex,
-  onSelectChoice,
+  onSelectChoice,     // agora recebe (idx, hintUsed)
   onNext,
   onOpenTheory,
   onCancel,
   mageImage,
   playerName
 }) {
+  const [hintUsed, setHintUsed] = useState(false);
+  const [hiddenChoices, setHiddenChoices] = useState(new Set());
+
   const progress = useMemo(() => (total ? (index / total) * 100 : 0), [index, total]);
 
   useEffect(() => {
     function handler(e) {
       if (e.key === "Enter" && !document.getElementById("btnNext")?.disabled) {
         onNext();
+        Sound.play("next");
       }
     }
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onNext]);
 
+  // Reset hint state ao carregar nova questão
+  useEffect(() => {
+    setHintUsed(false);
+    setHiddenChoices(new Set());
+  }, [question, index]);
+
+  // Confete ao acertar
   useEffect(() => {
     if (!question || !answered) return;
     const correct = question.answer;
     if (selectedIndex === correct) {
       confettiBurst({ x: window.innerWidth / 2, y: 120 });
+      Sound.play("correct");
+    } else {
+      Sound.play("wrong");
     }
   }, [answered, selectedIndex, question]);
 
@@ -68,6 +83,31 @@ export default function Quiz({
     ? (isCorrect ? "Boa! " : "Quase! ") + (question.explanation || "")
     : "";
 
+  function handleHint() {
+    if (!question || hintUsed) return;
+    // Elimina 2 alternativas incorretas aleatórias
+    const wrongIdx = question.choices
+      .map((_, i) => i)
+      .filter((i) => i !== correct && !hiddenChoices.has(i));
+    // embaralha e pega 2
+    for (let i = wrongIdx.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [wrongIdx[i], wrongIdx[j]] = [wrongIdx[j], wrongIdx[i]];
+    }
+    const toHide = wrongIdx.slice(0, 2);
+    const nextSet = new Set(hiddenChoices);
+    toHide.forEach((i) => nextSet.add(i));
+    setHiddenChoices(nextSet);
+    setHintUsed(true);
+    Sound.play("hint");
+  }
+
+  function handleSelect(i) {
+    if (showFeedback) return;
+    // passa informação de dica usada
+    onSelectChoice(i, hintUsed);
+  }
+
   return (
     <section className="card" aria-live="polite" style={{ position: "relative", zIndex: 1 }}>
       <div className="progress">
@@ -79,8 +119,16 @@ export default function Quiz({
           <span className="tag">{filterTopic ? `${question.topic} (foco)` : question.topic}</span>
           <span className="muted">{`Pergunta ${index + 1} de ${total}`}</span>
         </div>
-        <div className="right">
+        <div className="right quiz-tools">
           <button className="btn" onClick={onOpenTheory}>Teoria do tópico</button>
+          <button
+            className="btn"
+            onClick={handleHint}
+            disabled={hintUsed || showFeedback}
+            title="Elimina 2 alternativas; acerto vale 0,5 ponto"
+          >
+            Pedir dica (-0,5)
+          </button>
         </div>
       </div>
 
@@ -96,10 +144,12 @@ export default function Quiz({
         {question.choices.map((c, i) => {
           const good = i === correct;
           const picked = i === selectedIndex;
+          const hidden = hiddenChoices.has(i) && !showFeedback; // após responder, mostramos todas para feedback
           const classNames = [
             "choice",
             showFeedback && good ? "correct" : "",
-            showFeedback && picked && !good ? "incorrect" : ""
+            showFeedback && picked && !good ? "incorrect" : "",
+            hidden ? "is-hidden" : ""
           ].join(" ").trim();
 
           return (
@@ -108,7 +158,7 @@ export default function Quiz({
               type="button"
               className={classNames}
               aria-disabled={showFeedback ? "true" : "false"}
-              onClick={() => onSelectChoice(i)}
+              onClick={() => handleSelect(i)}
             >
               {c}
             </button>
@@ -125,7 +175,12 @@ export default function Quiz({
       </div>
 
       <div className="quiz-actions">
-        <button id="btnNext" className="btn" onClick={onNext} disabled={!showFeedback}>
+        <button
+          id="btnNext"
+          className="btn"
+          onClick={() => { onNext(); Sound.play("next"); }}
+          disabled={!showFeedback}
+        >
           Próxima
         </button>
       </div>

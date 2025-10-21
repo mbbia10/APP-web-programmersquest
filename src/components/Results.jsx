@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { downloadResultCard } from "../utils/resultCard";
 
-export default function Results({ score, total, perTopic, onRestart }) {
-  const pct = total ? Math.round((score / total) * 100) : 0;
+export default function Results({ score, total, perTopic, onRestart, onPracticeTopic, player }) {
+  const pct = total ? (score / total) * 100 : 0;
+  const pctText = `${pct.toFixed(1)}%`;
+
+  const weakTopics = useMemo(() => {
+    const arr = Object.entries(perTopic || {}).map(([topic, d]) => {
+      const accuracy = d.total ? (d.correct || 0) / d.total : 0;
+      return { topic, correct: d.correct || 0, total: d.total || 0, accuracy };
+    });
+    arr.sort((a, b) => a.accuracy - b.accuracy);
+    return arr.slice(0, 2);
+  }, [perTopic]);
 
   function shareResult() {
     const lines = [
-      "Resultado do ProgQuiz:",
-      `Pontuação: ${score}/${total} (${pct}%)`,
+      "Resultado do Programmer´s Quest:",
+      `Pontuação: ${score} / ${total} (${pctText})`,
       "Por tópico:"
     ];
     Object.entries(perTopic || {}).forEach(([topic, d]) => {
-      const p = Math.round(((d.correct || 0) / (d.total || 0)) * 100) || 0;
+      const p = d.total ? Math.round(((d.correct || 0) / d.total) * 100) : 0;
       lines.push(`- ${topic}: ${d.correct}/${d.total} (${p}%)`);
     });
     const text = lines.join("\n");
@@ -22,19 +33,28 @@ export default function Results({ score, total, perTopic, onRestart }) {
     alert("Melhor pontuação limpa!");
   }
 
+  async function handleCard() {
+    await downloadResultCard({
+      player: { name: player?.name || "Jogador", avatar: player?.avatar || "/mage.png" },
+      score,
+      total,
+      perTopic
+    });
+  }
+
   return (
     <section className="card">
       <h2>Resultado</h2>
       <p>
         <strong>Pontuação:</strong>{" "}
-        <span>{score} / {total} ({pct}%)</span>
+        <span>{score} / {total} ({pctText})</span>
       </p>
 
       <div>
         <h3>Desempenho por tópico</h3>
         <ul>
           {Object.entries(perTopic || {}).map(([topic, data]) => {
-            const p = Math.round(((data.correct || 0) / (data.total || 0)) * 100) || 0;
+            const p = data.total ? Math.round(((data.correct || 0) / data.total) * 100) : 0;
             return (
               <li key={topic}>
                 {topic}: {data.correct}/{data.total} ({p}%)
@@ -44,9 +64,28 @@ export default function Results({ score, total, perTopic, onRestart }) {
         </ul>
       </div>
 
+      {weakTopics.length ? (
+        <div style={{ marginTop: 12 }}>
+          <h3>Revisar pontos fracos</h3>
+          <div className="results-actions">
+            {weakTopics.map(w => (
+              <button
+                key={w.topic}
+                className="btn"
+                onClick={() => onPracticeTopic?.(w.topic)}
+                title={`Praticar apenas ${w.topic}`}
+              >
+                Praticar {w.topic}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="results-actions">
         <button className="btn" onClick={onRestart}>Reiniciar</button>
         <button className="btn" onClick={shareResult}>Copiar resultado</button>
+        <button className="btn" onClick={handleCard}>Gerar cartaz (PNG)</button>
         <button className="btn danger" onClick={clearBest}>Limpar melhor pontuação</button>
       </div>
 

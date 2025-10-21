@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { confettiBurst } from "../utils/Confetti";
+import { confettiBurst } from "../utils/confetti";
 import "../coach.css";
 
 // Dicas (adulto e kids) — sem mudanças perigosas de sintaxe

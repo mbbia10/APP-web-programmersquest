@@ -11,7 +11,6 @@ export default defineConfig({
     host: true,
     // permita seu domínio do ngrok (use o específico ou wildcard do subdomínio)
     // Opção A: domínio específico do seu túnel
-    allowedHosts: ["e39ca073d0d1.ngrok-free.app"],
     // Opção B (alternativa): wildcard do ngrok
     allowedHosts: [".ngrok-free.app"],
 
