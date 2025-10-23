@@ -3,7 +3,7 @@ import Intro from "./components/Intro.jsx";
 import Learn from "./components/Learn.jsx";
 import Quiz from "./components/Quiz.jsx";
 import Results from "./components/Results.jsx";
-import Background from "./components/Background.jsx";
+import FloatingBackground from "./components/FloatingBackground.jsx";
 import ProfileModal from "./components/ProfileModal.jsx";
 import { QUESTIONS } from "./data/questions.js";
 import { LESSONS } from "./data/lessons.js";
@@ -18,7 +18,6 @@ const SETTINGS_KEYS = {
   motion: "settings_motion",
 };
 
-// Fallback mínimo caso QUESTIONS não carregue
 const DEFAULT_QUESTIONS = [
   {
     topic: "Variáveis",
@@ -71,7 +70,6 @@ export default function App() {
   const allLessonsTopics = useMemo(() => Object.keys(LESSONS || {}), []);
   const currentQuestion = questions.length > 0 ? questions[index] : null;
 
-  // Carregar perfil + settings
   useEffect(() => {
     const saved = localStorage.getItem(PROFILE_KEY);
     if (saved) {
@@ -79,8 +77,7 @@ export default function App() {
     }
     const s = localStorage.getItem(SETTINGS_KEYS.sounds);
     const m = localStorage.getItem(SETTINGS_KEYS.motion);
-    if (s !== null) setSoundsOn(s === "true");
-    else setSoundsOn(true);
+    if (s !== null) setSoundsOn(s === "true"); else setSoundsOn(true);
     if (m !== null) setMotionOn(m === "true");
     else {
       const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -88,7 +85,6 @@ export default function App() {
     }
   }, []);
 
-  // Aplicar sons no manager
   useEffect(() => {
     Sound.setEnabled(soundsOn);
     localStorage.setItem(SETTINGS_KEYS.sounds, String(soundsOn));
@@ -126,7 +122,7 @@ export default function App() {
       return;
     }
 
-    const qs = SHUFFLE ? shuffleArray(filtered) : filtered;
+    const qs = shuffleArray(filtered);
 
     setQuestions(qs);
     setIndex(0);
@@ -148,7 +144,6 @@ export default function App() {
   function backFromLearn() { setView("intro"); }
   function backToQuiz() { if (questions.length > 0) setView("quiz"); else setView("intro"); }
 
-  // onSelectChoice agora pode receber (idx, hintUsed)
   function selectChoice(idx, hintUsed = false) {
     if (answered) return;
     setAnswered(true);
@@ -207,7 +202,8 @@ export default function App() {
 
   return (
     <div className="app-root" style={{ position: "relative", zIndex: 1 }}>
-      {motionOn ? <Background speed={0.55} /> : null}
+      {/* Fundo animado novo, respeitando toggle de animações */}
+      {motionOn ? <FloatingBackground /> : null}
 
       <header className="app-header">
         <h1>Programmer´s Quest</h1>
@@ -244,7 +240,8 @@ export default function App() {
         </div>
       </header>
 
-      <main className="container">
+      {/* Centraliza Intro e Resultados verticalmente; Learn/Quiz continuam layout normal */}
+      <main className={`container ${view === "intro" || view === "results" ? "centered" : ""}`}>
         {view === "intro" && (
           <Intro
             onLearn={() => openLearn({ fromQuiz: false })}
@@ -264,7 +261,7 @@ export default function App() {
             onPracticeTopic={() => startQuiz(learnTopic)}
             onBack={fromQuiz ? backToQuiz : backFromLearn}
             fromQuiz={fromQuiz}
-            mageImage={profile?.avatar || "/mage.png"}
+            /* removido mageImage */
             playerName={profile?.name || ""}
           />
         )}
@@ -283,7 +280,7 @@ export default function App() {
               if (currentQuestion?.topic) openLearn({ topic: currentQuestion.topic, fromQuiz: true });
             }}
             onCancel={() => setView("intro")}
-            mageImage={profile?.avatar || "/mage.png"}
+            /* removido mageImage */
             playerName={profile?.name || ""}
           />
         )}

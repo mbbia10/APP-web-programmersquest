@@ -2,8 +2,8 @@ import React from "react";
 
 export default function Intro({ onLearn, onStart, onOpenProfile, player }) {
   return (
-    <section className="card">
-      <h2>Como funciona</h2>
+    <section className="card cute">
+      <h2 style={{ textAlign: "center", marginTop: 0 }}>Como funciona</h2>
       <ul>
         <li>Aprenda o básico de cada tópico no módulo “Aprender”.</li>
         <li>Pratique com perguntas e receba feedback imediato.</li>
@@ -24,7 +24,7 @@ export default function Intro({ onLearn, onStart, onOpenProfile, player }) {
         </div>
       )}
 
-      <div className="intro-actions">
+      <div className="intro-actions" style={{ justifyContent: "center" }}>
         <button className="btn" onClick={onLearn}>Aprender</button>
         <button className="btn primary" onClick={onStart}>Praticar (Quiz)</button>
       </div>

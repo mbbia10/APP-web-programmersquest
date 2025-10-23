@@ -21,7 +21,7 @@ export default function Learn({
   onPracticeTopic,
   onBack,
   fromQuiz,
-  mageImage,
+  /* removido mageImage */
   playerName
 }) {
   const data = currentTopic ? lessons[currentTopic] : null;
@@ -104,7 +104,13 @@ export default function Learn({
         </article>
       </div>
 
-      <Coach topic={currentTopic || "Geral"} context="learn" mageImage={mageImage} playerName={playerName} />
+      {/* Coach fixo com o mago padrão */}
+      <Coach
+        topic={currentTopic || "Geral"}
+        context="learn"
+        mageImage="/mage.png"
+        playerName={playerName}
+      />
     </section>
   );
 }

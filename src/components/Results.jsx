@@ -43,9 +43,9 @@ export default function Results({ score, total, perTopic, onRestart, onPracticeT
   }
 
   return (
-    <section className="card">
-      <h2>Resultado</h2>
-      <p>
+    <section className="card cute">
+      <h2 style={{ textAlign: "center", marginTop: 0 }}>Resultado</h2>
+      <p style={{ textAlign: "center" }}>
         <strong>Pontuação:</strong>{" "}
         <span>{score} / {total} ({pctText})</span>
       </p>
@@ -67,7 +67,7 @@ export default function Results({ score, total, perTopic, onRestart, onPracticeT
       {weakTopics.length ? (
         <div style={{ marginTop: 12 }}>
           <h3>Revisar pontos fracos</h3>
-          <div className="results-actions">
+          <div className="results-actions" style={{ justifyContent: "center" }}>
             {weakTopics.map(w => (
               <button
                 key={w.topic}
@@ -82,14 +82,16 @@ export default function Results({ score, total, perTopic, onRestart, onPracticeT
         </div>
       ) : null}
 
-      <div className="results-actions">
+      <div className="results-actions" style={{ justifyContent: "center" }}>
         <button className="btn" onClick={onRestart}>Reiniciar</button>
         <button className="btn" onClick={shareResult}>Copiar resultado</button>
         <button className="btn" onClick={handleCard}>Gerar cartaz (PNG)</button>
         <button className="btn danger" onClick={clearBest}>Limpar melhor pontuação</button>
       </div>
 
-      <p className="muted small">Dica: publique no GitHub Pages e entregue o link + repositório.</p>
+      <p className="muted small" style={{ textAlign: "center" }}>
+        Dica: publique no GitHub Pages e entregue o link + repositório.
+      </p>
     </section>
   );
 }
